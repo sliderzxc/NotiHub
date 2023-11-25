@@ -1,4 +1,4 @@
-package com.sliderzxc.notihub
+package com.sliderzxc.notihub.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

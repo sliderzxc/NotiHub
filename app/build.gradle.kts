@@ -1,7 +1,9 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -16,9 +18,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -30,19 +30,15 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
+
+    buildFeatures.compose = true
+    composeOptions.kotlinCompilerExtensionVersion = "1.5.3"
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -51,20 +47,33 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.core.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.activity.compose)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.ui)
-    implementation(libs.ui.graphics)
-    implementation(libs.ui.tooling.preview)
-    implementation(libs.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.ui.test.junit4)
-    debugImplementation(libs.ui.tooling)
-    debugImplementation(libs.ui.test.manifest)
+    // AndroidX
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.splashscreen)
+    // Jetpack Compose
+    platform(libs.compose.bom).let { bom ->
+        implementation(bom)
+        androidTestImplementation(bom)
+        debugImplementation(bom)
+    }
+    implementation(libs.compose.ui.core)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.navigation)
+    implementation(libs.compose.systemuicontroller)
+    // Hilt
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    // Decompose
+    implementation(libs.decompose.core)
+    implementation(libs.decompose.compose)
+    // MVI Kotlin
+    implementation(libs.mvikotlin.core)
+    implementation(libs.mvikotlin.main)
+    implementation(libs.mvikotlin.coroutines)
 }
